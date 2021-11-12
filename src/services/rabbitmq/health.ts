@@ -1,4 +1,4 @@
-import { HealthChecker } from "./rabbitmqChecker";
+import { HealthChecker } from "./rabbitmqChecker"; 
 
 export type HealthStatus = 'UP' | 'DOWN';
 export interface HealthMap {
