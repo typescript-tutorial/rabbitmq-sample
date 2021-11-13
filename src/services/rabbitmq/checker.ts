@@ -10,7 +10,7 @@ export interface HealthChecker {
   check(): Promise<AnyMap>;
 }
 
-export class RabbitMQChecker {
+export class RabbitMQChecker implements HealthChecker {
   constructor(public config: Config, public service?: string, private timeout?: number) {
     this.check = this.check.bind(this);
     this.name = this.name.bind(this);

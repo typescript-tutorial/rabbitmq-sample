@@ -1,5 +1,3 @@
-import { HealthChecker } from './checker';
-
 export type HealthStatus = 'UP' | 'DOWN';
 export interface HealthMap {
   [key: string]: Health;
@@ -11,6 +9,11 @@ export interface Health {
 }
 export interface AnyMap {
   [key: string]: any;
+}
+interface HealthChecker {
+  name(): string;
+  build(data: AnyMap, error: any): AnyMap;
+  check(): Promise<AnyMap>;
 }
 
 export async function check(checkers: HealthChecker[]): Promise<Health> {
