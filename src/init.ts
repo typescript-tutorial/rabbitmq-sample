@@ -5,9 +5,9 @@ import { ErrorHandler, Handler, RetryWriter } from 'mq-one';
 import { Attributes, Validator } from 'validator-x';
 import { ApplicationContext } from './context';
 import { HealthController } from './controllers/HealthController';
-import { Consume } from './services/rabbitmq/consumer';
+import { RabbitmqChecker } from './services/rabbitmq/checker';
+import { Consumer } from './services/rabbitmq/consumer';
 import { MQConfig } from './services/rabbitmq/model';
-import { RabbitmqChecker } from './services/rabbitmq/rabbitmqChecker';
 // import { Subscribe } from './services/rabbitmq/subcriber';
 
 const retries = [5000, 10000, 20000];
@@ -45,8 +45,8 @@ export function createContext(db: Db, config: MQConfig): ApplicationContext {
   // const subcriber = new Subscribe<User>(config, log);
   // const retryService = new RetryService<User, boolean>(subcriber.subscriber, log, log);
   const handler = new Handler<User, boolean>(retryWriter.write, validator.validate, [], errorHandler.error, log, log, undefined, 3, 'retry');
-  const consumer = new Consume<User>(config, log);
-  const ctx: ApplicationContext = { read: consumer.consumer, handle: handler.handle, healthController };
+  const consumer = new Consumer<User>(config, log);
+  const ctx: ApplicationContext = { read: consumer.consume, handle: handler.handle, healthController };
   return ctx;
 }
 

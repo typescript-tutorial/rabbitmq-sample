@@ -3,7 +3,7 @@ import { StringMap, toString } from 'mq-one';
 import { connectChannel } from './connect';
 import { MQConfig } from './model';
 
-export class Consume<T> {
+export class Consumer<T> {
   json?: boolean;
   constructor(
     public config: MQConfig,
@@ -12,15 +12,15 @@ export class Consume<T> {
     json?: boolean
   ) {
     this.json = json;
-    this.consumer = this.consumer.bind(this);
+    this.consume = this.consume.bind(this);
   }
-  async consumer(handle: (data: T, attributes?: StringMap) => Promise<number>) {
+  async consume(handle: (data: T, attributes?: StringMap) => Promise<number>) {
     try {
       const channel = await connectChannel(this.config);
       channel.consume(this.config.queue, async (msg) => {
         if (msg && msg.content) {
           const data = (this.json ? JSON.parse(msg.content.toString()) : msg.content.toString());
-          const attr: StringMap = convertStringMap(msg.properties.headers);
+          const attr: StringMap = mapHeader(msg.properties.headers);
           await handle(data, attr);
         } else {
           if (this.logError) {
@@ -36,7 +36,7 @@ export class Consume<T> {
   }
 }
 
-function convertStringMap(headers?: MessagePropertyHeaders): StringMap {
+export function mapHeader(headers?: MessagePropertyHeaders): StringMap {
   const attr: StringMap = {};
   if (headers) {
     const keys = Object.keys(headers);

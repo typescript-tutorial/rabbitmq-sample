@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
+import { HealthChecker } from '../services/rabbitmq/checker';
 import { check } from '../services/rabbitmq/health';
-import { HealthChecker } from '../services/rabbitmq/rabbitmqChecker';
 
 export class HealthController {
   constructor(protected checkers: HealthChecker[]) {

@@ -10,7 +10,7 @@ export function connectChannel(config: MQConfig): Promise<Channel> {
     } else if (config.config) {
       cf = config.config;
     } else {
-      throw new Error('MQ config doesn\'t exist!');
+      throw new Error('MQ config does not exist');
     }
     connect(cf, (er1, conn) => {
       if (er1) {
