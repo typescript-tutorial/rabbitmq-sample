@@ -1,9 +1,9 @@
 import { StringMap } from 'mq-one';
+import { Config } from './config';
 import { getChannel } from './connect';
-import { MQConfig } from './model';
 
 export class Sender<T> {
-  constructor(public config: MQConfig, private log?: (msg: any) => void) {
+  constructor(public config: Config, private log?: (msg: any) => void) {
     this.send = this.send.bind(this);
   }
   async send(data: T, attributes?: StringMap): Promise<boolean> {

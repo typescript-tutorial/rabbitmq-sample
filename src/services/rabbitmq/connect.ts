@@ -1,18 +1,18 @@
 import { Options } from 'amqplib';
-import { Channel, connect, Connection } from 'amqplib/callback_api';
-import { MQConfig } from './model';
+import { Channel, connect as connect2, Connection } from 'amqplib/callback_api';
+import { Config } from './config';
 
-export function getChannel(config: MQConfig): Promise<Channel> {
+export function getChannel(config: Config): Promise<Channel> {
   return new Promise((resolve, reject) => {
     let cf: string | Options.Connect;
     if (config.url) {
       cf = config.url;
-    } else if (config.config) {
-      cf = config.config;
+    } else if (config.connect) {
+      cf = config.connect;
     } else {
       throw new Error('MQ config does not exist');
     }
-    connect(cf, (er1, conn) => {
+    connect2(cf, (er1, conn) => {
       if (er1) {
         reject(er1);
       }
@@ -27,9 +27,9 @@ export function getChannel(config: MQConfig): Promise<Channel> {
   });
 }
 
-export function checkConnect(config: string | Options.Connect): Promise<Connection> {
+export function connect(config: string | Options.Connect): Promise<Connection> {
   return new Promise((resolve, reject) => {
-    connect(config, (err, conn) => {
+    connect2(config, (err, conn) => {
       if (err) {
         reject(err);
       }

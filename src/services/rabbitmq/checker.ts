@@ -1,5 +1,5 @@
-import { checkConnect } from './connect';
-import { MQConfig } from './model';
+import { Config } from './config';
+import { connect } from './connect';
 
 export interface AnyMap {
   [key: string]: any;
@@ -10,8 +10,8 @@ export interface HealthChecker {
   check(): Promise<AnyMap>;
 }
 
-export class RabbitmqChecker {
-  constructor(public config: MQConfig, public service?: string, private timeout?: number) {
+export class RabbitMQChecker {
+  constructor(public config: Config, public service?: string, private timeout?: number) {
     this.check = this.check.bind(this);
     this.name = this.name.bind(this);
     this.build = this.build.bind(this);
@@ -21,9 +21,9 @@ export class RabbitmqChecker {
     const promise = new Promise<any>(async (resolve, reject) => {
       try {
         if (this.config.url) {
-          await checkConnect(this.config.url);
-        } else if (this.config.config) {
-          await checkConnect(this.config.config);
+          await connect(this.config.url);
+        } else if (this.config.connect) {
+          await connect(this.config.connect);
         } else {
           reject(`MQ config doesn't exist!`);
         }

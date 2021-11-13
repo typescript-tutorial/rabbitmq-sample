@@ -1,7 +1,7 @@
 import { Options } from 'amqplib';
 
-export interface MQConfig {
+export interface Config {
   queue: string;
   url?: string;
-  config?: Options.Connect;
+  connect?: Options.Connect;
 }

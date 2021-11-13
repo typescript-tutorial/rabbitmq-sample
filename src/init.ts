@@ -5,9 +5,9 @@ import { ErrorHandler, Handler, RetryWriter } from 'mq-one';
 import { Attributes, Validator } from 'validator-x';
 import { ApplicationContext } from './context';
 import { HealthController } from './controllers/HealthController';
-import { RabbitmqChecker } from './services/rabbitmq/checker';
+import { RabbitMQChecker } from './services/rabbitmq/checker';
+import { Config } from './services/rabbitmq/config';
 import { Consumer } from './services/rabbitmq/consumer';
-import { MQConfig } from './services/rabbitmq/model';
 // import { Subscribe } from './services/rabbitmq/subcriber';
 
 const retries = [5000, 10000, 20000];
@@ -35,8 +35,8 @@ const user: Attributes = {
   }
 };
 
-export function createContext(db: Db, config: MQConfig): ApplicationContext {
-  const rabbitmqChecker = new RabbitmqChecker(config);
+export function createContext(db: Db, config: Config): ApplicationContext {
+  const rabbitmqChecker = new RabbitMQChecker(config);
   const healthController = new HealthController([rabbitmqChecker]);
   const writer = new MongoInserter(db.collection('users'), 'id');
   const retryWriter = new RetryWriter(writer.write, retries, writeUser, log);

@@ -1,12 +1,12 @@
 import { MessagePropertyHeaders } from 'amqplib';
 import { StringMap, toString } from 'mq-one';
+import { Config } from './config';
 import { getChannel } from './connect';
-import { MQConfig } from './model';
 
 export class Consumer<T> {
   json?: boolean;
   constructor(
-    public config: MQConfig,
+    public config: Config,
     public logError?: (msg: any) => void,
     public logInfo?: (msg: any) => void,
     json?: boolean

@@ -6,7 +6,7 @@ import { connectToDb } from 'mongodb-extension';
 // import { connectChannel } from 'services/rabbitmq/connect';
 import { createContext } from './init';
 import { route } from './route';
-import { MQConfig } from './services/rabbitmq/model';
+import { Config } from './services/rabbitmq/config';
 // import { printData, retry } from './services/pubsub/retry';
 
 dotenv.config();
@@ -26,7 +26,7 @@ connectToDb(`${mongoURI}`, `${mongoDB}`).then(async (db) => {
   if (!rabbitmqUrl || !queue) {
     throw new Error('url and queue can not empty!');
   }
-  const config: MQConfig = {
+  const config: Config = {
     url: rabbitmqUrl,
     queue,
   };
