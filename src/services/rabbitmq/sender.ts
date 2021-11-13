@@ -1,5 +1,5 @@
 import { StringMap } from 'mq-one';
-import { connectChannel } from './connect';
+import { getChannel } from './connect';
 import { MQConfig } from './model';
 
 export class Sender<T> {
@@ -8,10 +8,17 @@ export class Sender<T> {
   }
   async send(data: T, attributes?: StringMap): Promise<boolean> {
     try {
-      const channel = await connectChannel(this.config);
-      return channel.sendToQueue(this.config.queue, Buffer.from(JSON.stringify(data)), { headers: attributes });
+      const channel = await getChannel(this.config);
+      return channel.sendToQueue(this.config.queue, Buffer.from(toString<T>(data)), { headers: attributes });
     } catch (err) {
       throw err;
     }
+  }
+}
+export function toString<T>(data: T): string {
+  if (typeof data === 'string') {
+    return data;
+  } else {
+    return JSON.stringify(data);
   }
 }

@@ -2,7 +2,7 @@ import { Options } from 'amqplib';
 import { Channel, connect, Connection } from 'amqplib/callback_api';
 import { MQConfig } from './model';
 
-export function connectChannel(config: MQConfig): Promise<Channel> {
+export function getChannel(config: MQConfig): Promise<Channel> {
   return new Promise((resolve, reject) => {
     let cf: string | Options.Connect;
     if (config.url) {
