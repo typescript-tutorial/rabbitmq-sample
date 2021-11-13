@@ -1,8 +1,10 @@
 import { MessagePropertyHeaders } from 'amqplib';
-import { StringMap, toString } from 'mq-one';
 import { Config } from './config';
 import { getChannel } from './connect';
 
+interface StringMap {
+  [key: string]: string;
+}
 export class Consumer<T> {
   json?: boolean;
   constructor(
@@ -35,7 +37,6 @@ export class Consumer<T> {
     }
   }
 }
-
 export function mapHeader(headers?: MessagePropertyHeaders): StringMap {
   const attr: StringMap = {};
   if (headers) {
@@ -55,4 +56,27 @@ export function mapHeader(headers?: MessagePropertyHeaders): StringMap {
     }
   }
   return attr;
+}
+export function toString(v: any, attributes?: StringMap): string {
+  if (attributes) {
+    const ks = Object.keys(attributes);
+    if (ks.length > 0) {
+      if (typeof v === 'string') {
+        return v + JSON.stringify(attributes);
+      } else {
+        return JSON.stringify(v) + ' ' + JSON.stringify(attributes);
+      }
+    } else {
+      return ts(v);
+    }
+  } else {
+    return ts(v);
+  }
+}
+function ts(v: any): string {
+  if (typeof v === 'string') {
+    return v;
+  } else {
+    return JSON.stringify(v);
+  }
 }
