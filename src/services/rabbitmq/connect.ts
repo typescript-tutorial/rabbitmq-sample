@@ -1,39 +1,39 @@
-import {connect, Channel, Connection} from "amqplib/callback_api";
-import { Options } from "amqplib";
-import { MQConfig } from "./model";
+import { Options } from 'amqplib';
+import { Channel, connect, Connection } from 'amqplib/callback_api';
+import { MQConfig } from './model';
 
-export function connectChannel (config: MQConfig) : Promise<Channel> {
-    return new Promise((resolve, reject) => {
-        let cf: string | Options.Connect;
-        if(config.url) {
-            cf = config.url;
-        } else if(config.config) {
-            cf = config.config;
-        } else {
-            throw new Error("MQ config doesn't exist!");
+export function connectChannel(config: MQConfig): Promise<Channel> {
+  return new Promise((resolve, reject) => {
+    let cf: string | Options.Connect;
+    if (config.url) {
+      cf = config.url;
+    } else if (config.config) {
+      cf = config.config;
+    } else {
+      throw new Error('MQ config doesn\'t exist!');
+    }
+    connect(cf, (er1, conn) => {
+      if (er1) {
+        reject(er1);
+      }
+      conn.createChannel((er2, ch) => {
+        if (er2) {
+          reject(er2);
         }
-        connect(cf, (err, conn) => {
-            if(err) {
-                reject(err);
-            }
-            conn.createChannel((err, ch) => {
-                if (err) {
-                    reject(err);
-                }
-                ch.assertQueue(config.queue, { durable: false });
-                resolve(ch);
-            })
-        })
-    })
-};
+        ch.assertQueue(config.queue, { durable: false });
+        resolve(ch);
+      });
+    });
+  });
+}
 
-export function checkConnect (config: string | Options.Connect) : Promise<Connection> {
-    return new Promise((resolve, reject) => {
-        connect(config, (err, conn) => {
-            if(err) {
-                reject(err);
-            }
-            resolve(conn);
-        })
-    })
-};
+export function checkConnect(config: string | Options.Connect): Promise<Connection> {
+  return new Promise((resolve, reject) => {
+    connect(config, (err, conn) => {
+      if (err) {
+        reject(err);
+      }
+      resolve(conn);
+    });
+  });
+}

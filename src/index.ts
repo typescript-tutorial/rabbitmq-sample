@@ -1,11 +1,11 @@
-import {json} from 'body-parser';
+import { json } from 'body-parser';
 import dotenv from 'dotenv';
 import express from 'express';
 import http from 'http';
-import {createContext} from './init';
-import {route} from './route';
 import { connectToDb } from 'mongodb-extension';
-import { connectChannel } from 'services/rabbitmq/connect';
+// import { connectChannel } from 'services/rabbitmq/connect';
+import { createContext } from './init';
+import { route } from './route';
 import { MQConfig } from './services/rabbitmq/model';
 // import { printData, retry } from './services/pubsub/retry';
 
@@ -22,15 +22,15 @@ const queue = process.env.QUEUE;
 
 app.use(json());
 
-connectToDb(`${mongoURI}`, `${mongoDB}`).then(async(db) => {
-  if(!rabbitmqUrl || !queue) {
-    throw new Error("url and queue can not empty!");
+connectToDb(`${mongoURI}`, `${mongoDB}`).then(async (db) => {
+  if (!rabbitmqUrl || !queue) {
+    throw new Error('url and queue can not empty!');
   }
-  const MQConfig: MQConfig = {
-      url: rabbitmqUrl,
-      queue,
-  }
-  const ctx = createContext(db, MQConfig);
+  const config: MQConfig = {
+    url: rabbitmqUrl,
+    queue,
+  };
+  const ctx = createContext(db, config);
   ctx.read(ctx.handle);
   route(app, ctx);
   http.createServer(app).listen(port, () => {

@@ -1,4 +1,4 @@
-import {Request, Response} from 'express';
+import { Request, Response } from 'express';
 import { check } from '../services/rabbitmq/health';
 import { HealthChecker } from '../services/rabbitmq/rabbitmqChecker';
 
