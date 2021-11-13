@@ -37,7 +37,7 @@ const user: Attributes = {
 
 export function createContext(db: Db, config: Config): ApplicationContext {
   const rabbitmqChecker = new RabbitMQChecker(config);
-  const healthController = new HealthController([rabbitmqChecker]);
+  const health = new HealthController([rabbitmqChecker]);
   const writer = new MongoInserter(db.collection('users'), 'id');
   const retryWriter = new RetryWriter(writer.write, retries, writeUser, log);
   const errorHandler = new ErrorHandler(log);
@@ -46,7 +46,7 @@ export function createContext(db: Db, config: Config): ApplicationContext {
   // const retryService = new RetryService<User, boolean>(subcriber.subscriber, log, log);
   const handler = new Handler<User, boolean>(retryWriter.write, validator.validate, [], errorHandler.error, log, log, undefined, 3, 'retry');
   const consumer = new Consumer<User>(config, log);
-  const ctx: ApplicationContext = { read: consumer.consume, handle: handler.handle, healthController };
+  const ctx: ApplicationContext = { read: consumer.consume, handle: handler.handle, health };
   return ctx;
 }
 
