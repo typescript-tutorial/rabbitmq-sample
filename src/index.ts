@@ -3,7 +3,7 @@ import dotenv from 'dotenv';
 import express from 'express';
 import http from 'http';
 import { connectToDb } from 'mongodb-extension';
-import { createContext } from './init';
+import { createContext } from './context';
 import { Config } from './services/rabbitmq';
 
 dotenv.config();
