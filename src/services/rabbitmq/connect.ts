@@ -26,7 +26,6 @@ export function getChannel(config: Config): Promise<Channel> {
     });
   });
 }
-
 export function connect(config: string | Options.Connect): Promise<Connection> {
   return new Promise((resolve, reject) => {
     connect2(config, (err, conn) => {
@@ -36,4 +35,30 @@ export function connect(config: string | Options.Connect): Promise<Connection> {
       resolve(conn);
     });
   });
+}
+export interface StringMap {
+  [key: string]: string;
+}
+export function toString(v: any, attributes?: StringMap): string {
+  if (attributes) {
+    const ks = Object.keys(attributes);
+    if (ks.length > 0) {
+      if (typeof v === 'string') {
+        return v + JSON.stringify(attributes);
+      } else {
+        return JSON.stringify(v) + ' ' + JSON.stringify(attributes);
+      }
+    } else {
+      return ts(v);
+    }
+  } else {
+    return ts(v);
+  }
+}
+function ts(v: any): string {
+  if (typeof v === 'string') {
+    return v;
+  } else {
+    return JSON.stringify(v);
+  }
 }
