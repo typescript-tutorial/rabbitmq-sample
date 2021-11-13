@@ -1,9 +1,8 @@
 import { json } from 'body-parser';
 import dotenv from 'dotenv';
-import express, { Application } from 'express';
+import express from 'express';
 import http from 'http';
 import { connectToDb } from 'mongodb-extension';
-import { ApplicationContext } from './context';
 import { createContext } from './init';
 import { Config } from './services/rabbitmq';
 
@@ -30,12 +29,9 @@ connectToDb(`${mongoURI}`, `${mongoDB}`).then(async (db) => {
   };
   const ctx = createContext(db, config);
   ctx.read(ctx.handle);
-  route(app, ctx);
+
+  app.get('/health', ctx.health.check);
   http.createServer(app).listen(port, () => {
     console.log('Start server at port ' + port);
   });
 });
-
-export function route(application: Application, ctx: ApplicationContext): void {
-  application.get('/health', ctx.health.check);
-}
