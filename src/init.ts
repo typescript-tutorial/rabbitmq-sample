@@ -5,9 +5,7 @@ import { ErrorHandler, Handler, RetryWriter } from 'mq-one';
 import { Attributes, Validator } from 'validator-x';
 import { ApplicationContext } from './context';
 import { HealthController } from './controllers/HealthController';
-import { RabbitMQChecker } from './services/rabbitmq/checker';
-import { Config } from './services/rabbitmq/config';
-import { Consumer } from './services/rabbitmq/consumer';
+import { Config, Consumer, RabbitMQChecker } from './services/rabbitmq';
 // import { Subscribe } from './services/rabbitmq/subcriber';
 
 const retries = [5000, 10000, 20000];

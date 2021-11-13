@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import { HealthChecker } from '../services/rabbitmq/checker';
+import { HealthChecker } from '../services/rabbitmq';
 import { check } from '../services/rabbitmq/health';
 
 export class HealthController {

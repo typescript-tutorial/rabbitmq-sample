@@ -1,13 +1,11 @@
 import { json } from 'body-parser';
 import dotenv from 'dotenv';
-import express from 'express';
+import express, { Application } from 'express';
 import http from 'http';
 import { connectToDb } from 'mongodb-extension';
-// import { connectChannel } from 'services/rabbitmq/connect';
+import { ApplicationContext } from './context';
 import { createContext } from './init';
-import { route } from './route';
-import { Config } from './services/rabbitmq/config';
-// import { printData, retry } from './services/pubsub/retry';
+import { Config } from './services/rabbitmq';
 
 dotenv.config();
 
@@ -37,3 +35,7 @@ connectToDb(`${mongoURI}`, `${mongoDB}`).then(async (db) => {
     console.log('Start server at port ' + port);
   });
 });
+
+export function route(application: Application, ctx: ApplicationContext): void {
+  application.get('/health', ctx.health.check);
+}
