@@ -5,6 +5,7 @@ import http from 'http';
 import { connectToDb } from 'mongodb-extension';
 import { createContext } from './context';
 import { Config } from './services/rabbitmq';
+import { getBody } from "logger-core";
 
 dotenv.config();
 
@@ -30,8 +31,26 @@ connectToDb(`${mongoURI}`, `${mongoDB}`).then(async (db) => {
   const ctx = createContext(db, config);
   ctx.read(ctx.handle);
 
-  app.get('/health', ctx.health.check);
-  http.createServer(app).listen(port, () => {
-    console.log('Start server at port ' + port);
+  http
+  .createServer((req, res) => {
+    if (req.url === "/health") {
+      ctx.health.check(req, res);
+    } else if (req.url === "/send") {
+      getBody(req).then((body: any) => {
+        ctx
+          .sender(JSON.parse(body))
+          .then(() => {
+            res.writeHead(200, { "Content-Type": "application/json" });
+            res.end(JSON.stringify({ message: "message was produced" }));
+          })
+          .catch((err: any) => {
+            res.writeHead(500, { "Content-Type": "application/json" });
+            res.end(JSON.stringify({ error: err }));
+          });
+      }).catch(err => console.log(err));
+    }
+  })
+  .listen(port, () => {
+    console.log("Start server at port " + port);
   });
 });

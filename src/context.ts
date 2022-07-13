@@ -1,9 +1,9 @@
 import { Db } from 'mongodb';
 import { MongoInserter } from 'mongodb-extension';
 import { ErrorHandler, Handler, RetryWriter, StringMap } from 'mq-one';
-import { Attributes, Validator } from 'validator-x';
-import { HealthController } from './controllers/HealthController';
-import { Config, Consumer, RabbitMQChecker } from './services/rabbitmq';
+import { Attributes, Validator } from 'xvalidators';
+import { HealthController } from 'health-service';
+import { Config, Consumer, Sender, RabbitMQChecker } from './services/rabbitmq';
 // import { Subscribe } from './services/rabbitmq/subcriber';
 
 const retries = [5000, 10000, 20000];
@@ -41,6 +41,7 @@ export const user: Attributes = {
 export interface ApplicationContext {
   handle: (data: User, header?: StringMap) => Promise<number>;
   read: (handle: (data: User, attributes?: StringMap) => Promise<number>) => Promise<void>;
+  sender: (data: User, attributes?: StringMap) => Promise<boolean>;
   health: HealthController;
 }
 
@@ -54,8 +55,9 @@ export function createContext(db: Db, config: Config): ApplicationContext {
   // const subcriber = new Subscribe<User>(config, log);
   // const retryService = new RetryService<User, boolean>(subcriber.subscriber, log, log);
   const handler = new Handler<User, boolean>(retryWriter.write, validator.validate, [], errorHandler.error, log, log, undefined, 3, 'retry');
+  const sender = new Sender<User>(config);
   const consumer = new Consumer<User>(config, log);
-  const ctx: ApplicationContext = { read: consumer.consume, handle: handler.handle, health };
+  const ctx: ApplicationContext = { read: consumer.consume, sender: sender.send, handle: handler.handle, health };
   return ctx;
 }
 export function log(msg: any): void {
