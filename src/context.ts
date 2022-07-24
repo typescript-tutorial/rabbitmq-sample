@@ -1,9 +1,9 @@
+import { HealthController } from 'health-service';
 import { Db } from 'mongodb';
 import { MongoInserter } from 'mongodb-extension';
 import { ErrorHandler, Handler, RetryWriter, StringMap } from 'mq-one';
 import { Attributes, Validator } from 'xvalidators';
-import { HealthController } from 'health-service';
-import { Config, Consumer, Sender, RabbitMQChecker } from './services/rabbitmq';
+import { Config, Consumer, RabbitMQChecker, Sender } from './services/rabbitmq';
 // import { Subscribe } from './services/rabbitmq/subcriber';
 
 const retries = [5000, 10000, 20000];
