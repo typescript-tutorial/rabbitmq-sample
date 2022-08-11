@@ -1,8 +1,9 @@
 import { HealthController } from 'health-service';
-import { Db } from 'mongodb';
-import { MongoInserter } from 'mongodb-extension';
-import { ErrorHandler, Handler, RetryWriter, StringMap } from 'mq-one';
 import { Attributes, Validator } from 'xvalidators';
+import { ErrorHandler, Handler, RetryWriter, StringMap } from 'mq-one';
+import { DB } from 'pg-extension';
+import { Repository } from 'query-core';
+
 import { Config, Consumer, RabbitMQChecker, Sender } from './services/rabbitmq';
 // import { Subscribe } from './services/rabbitmq/subcriber';
 
@@ -45,11 +46,11 @@ export interface ApplicationContext {
   health: HealthController;
 }
 
-export function createContext(db: Db, config: Config): ApplicationContext {
+export function createContext(db: DB, config: Config): ApplicationContext {
   const rabbitmqChecker = new RabbitMQChecker(config);
   const health = new HealthController([rabbitmqChecker]);
-  const writer = new MongoInserter(db.collection('users'), 'id');
-  const retryWriter = new RetryWriter(writer.write, retries, writeUser, log);
+  const repository = new Repository<User, string>(db, 'activemq', user);
+  const retryWriter = new RetryWriter(repository.insert, retries, writeUser, log);
   const errorHandler = new ErrorHandler(log);
   const validator = new Validator<User>(user, true);
   // const subcriber = new Subscribe<User>(config, log);
