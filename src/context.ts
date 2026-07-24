@@ -1,70 +1,50 @@
-import { HealthController } from 'health-service';
-import { Attributes, Validator } from 'xvalidators';
-import { ErrorHandler, Handler, RetryWriter, StringMap } from 'mq-one';
-import { DB } from 'pg-extension';
-import { Repository } from 'query-core';
+import { connect } from "amqplib"
+import { HealthController } from "health-service"
+import { ErrorHandler, Processor, RetryWriter, StringMap } from "message-processing"
+import { Pool } from "mysql2"
+import { MySQLWriter } from "mysql2-core"
+import { Logger } from "onecore"
+import { Config, Consumer, RabbitMQChecker, Sender } from "rabbitmq-transport"
+import { Validator } from "validation-core"
+import { User, userModel } from "./user"
 
-import { Config, Consumer, RabbitMQChecker, Sender } from './services/rabbitmq';
-// import { Subscribe } from './services/rabbitmq/subcriber';
-
-const retries = [5000, 10000, 20000];
-
-export interface User {
-  id: string;
-  username: string;
-  email?: string;
-  phone?: string;
-  dateOfBirth?: Date;
-}
-export const user: Attributes = {
-  id: {
-    length: 40
-  },
-  username: {
-    required: true,
-    length: 255
-  },
-  email: {
-    format: 'email',
-    required: true,
-    length: 120
-  },
-  phone: {
-    format: 'phone',
-    required: true,
-    length: 14
-  },
-  dateOfBirth: {
-    type: 'datetime'
-  }
-};
+const retries = [5000, 10000, 20000]
 
 export interface ApplicationContext {
-  handle: (data: User, header?: StringMap) => Promise<number>;
-  read: (handle: (data: User, attributes?: StringMap) => Promise<number>) => Promise<void>;
-  sender: (data: User, attributes?: StringMap) => Promise<boolean>;
-  health: HealthController;
+  process: (data: User, header?: StringMap) => Promise<number>
+  read: (handle: (data: User, attributes?: StringMap) => Promise<number>) => Promise<void>
+  sender: (data: User, attributes?: StringMap) => Promise<boolean>
+  health: HealthController
 }
 
-export function createContext(db: DB, config: Config): ApplicationContext {
-  const rabbitmqChecker = new RabbitMQChecker(config);
-  const health = new HealthController([rabbitmqChecker]);
-  const repository = new Repository<User, string>(db, 'activemq', user);
-  const retryWriter = new RetryWriter(repository.insert, retries, writeUser, log);
-  const errorHandler = new ErrorHandler(log);
-  const validator = new Validator<User>(user, true);
-  // const subcriber = new Subscribe<User>(config, log);
-  // const retryService = new RetryService<User, boolean>(subcriber.subscriber, log, log);
-  const handler = new Handler<User, boolean>(retryWriter.write, validator.validate, [], errorHandler.error, log, log, undefined, 3, 'retry');
-  const sender = new Sender<User>(config);
-  const consumer = new Consumer<User>(config, log);
-  const ctx: ApplicationContext = { read: consumer.consume, sender: sender.send, handle: handler.handle, health };
-  return ctx;
+export async function createContext(config: Config, pool: Pool, logger: Logger): Promise<ApplicationContext> {
+  const connection = await connect(config.url)
+  const channel = await connection.createChannel()
+  channel.assertQueue(config.queue, { durable: true })
+  const rabbitmqChecker = new RabbitMQChecker(config.url)
+  const health = new HealthController([rabbitmqChecker])
+  const writer = new MySQLWriter<User>(pool, "users", userModel)
+  const retryWriter = new RetryWriter(writer.write, retries, writeUser, logger.error)
+  const errorHandler = new ErrorHandler(logger.error)
+  const validator = new Validator<User>(userModel, true)
+  const processor = new Processor<User, boolean>(
+    retryWriter.write,
+    validator.validate,
+    [],
+    errorHandler.error,
+    logger.error,
+    logger.info,
+    undefined,
+    3,
+    "retry",
+  )
+  const sender = new Sender<User>(channel, config.queue)
+  const consumer = new Consumer<User>(channel, config.queue, logger.error)
+  const ctx: ApplicationContext = { read: consumer.consume, sender: sender.send, process: processor.process, health }
+  return ctx
 }
-export function log(msg: any): void {
-  console.log(JSON.stringify(msg));
-}
+
 export function writeUser(msg: User): Promise<number> {
-  console.log('Error: ' + JSON.stringify(msg));
-  return Promise.resolve(1);
+  console.log("Error: " + JSON.stringify(msg))
+  return Promise.resolve(1)
 }

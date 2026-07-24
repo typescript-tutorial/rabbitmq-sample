@@ -1,14 +1,6 @@
 export const config = {
   port: 8088,
   secure: false,
-  template: true,
-  allow: {
-    origin: "http://localhost:3000",
-    credentials: "true",
-    methods: "GET,PUT,POST,DELETE,OPTIONS,PATCH",
-    headers:
-      "Access-Control-Allow-Headers, Authorization, Origin,Accept, X-Requested-With, Content-Type, Access-Control-Request-Method, Access-Control-Request-Headers",
-  },
   log: {
     level: "debug",
     map: {
@@ -25,33 +17,31 @@ export const config = {
     size: "size",
   },
   db: {
-    user: 'dqcpsquyjmmxkb',
-    host: 'ec2-54-228-125-183.eu-west-1.compute.amazonaws.com',
-    password: '1093639f514498fbf09e803d98714b853849704783dc052aa1ef2039c60fe6e0',
-    database: 'd8maa489i4calm',
-    port: 5432,
-    ssl: {
-      rejectUnauthorized: false,
-    }
+    host: "127.0.0.1",
+    port: 3306,
+    user: "root",
+    password: "abcd1234",
+    database: "masterdata",
+    multipleStatements: true,
   },
   rabbitmq: {
-    url: 'amqps://mlxzdnko:0EGbofY9eg9lfqMoJGzeTmJj5iXR9NSe@chimpanzee.rmq.cloudamqp.com/mlxzdnko',
-    queue: 'queue',
-  }
-};
+    url: "amqp://admin:abcd1234@localhost:5672",
+    queue: "orders",
+  },
+}
 
-export const env = {
+export const environments = {
   sit: {
     mongo: {
-      db: 'masterdata',
+      db: "masterdata",
     },
   },
   prd: {
     log: {
-      level: 'error',
+      level: "error",
     },
     middleware: {
       log: false,
     },
   },
-};
+}
