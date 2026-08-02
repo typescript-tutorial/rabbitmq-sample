@@ -266,7 +266,16 @@ const retries = [5000, 10000, 20000]
 
 # Validation
 
-Messages are validated before reaching business logic.
+Messages are validated by [`validation-core`](https://www.npmjs.com/package/validation-core) before reaching business logic.
+
+Typical validation includes
+
+- Required fields
+- String length
+- Email format
+- Business constraints
+
+Invalid messages are rejected before reaching the database.
 
 ```
   RabbitMQ
@@ -283,8 +292,6 @@ Messages are validated before reaching business logic.
 
 Business Logic
 ```
-
-Invalid messages never reach the database.
 
 ---
 
