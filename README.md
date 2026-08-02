@@ -340,7 +340,28 @@ The sample exposes a health endpoint.
 GET /health
 ```
 
-Health checks include RabbitMQ connectivity and can easily be extended to include additional infrastructure services.
+The endpoint checks:
+
+- RabbitMQ connectivity
+- MySQL connectivity
+
+They can easily be extended to include additional infrastructure services.
+
+Example response
+
+```json
+{
+  "status": "UP",
+  "details": {
+    "rabbitmq": {
+      "status": "UP"
+    },
+    "mysql": {
+      "status": "UP"
+    }
+  }
+}
+```
 
 ---
 
