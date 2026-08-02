@@ -133,7 +133,7 @@ That's exactly where dependency injection should happen.
 
 # Ecosystem Integration
 
-This sample demonstrates how several **core-ts** libraries work together.
+This sample demonstrates how several [**core-ts**](https://github.com/core-ts) libraries work together.
 
 | Library                                                                  | Purpose                           |
 | ------------------------------------------------------------------------ | --------------------------------- |
