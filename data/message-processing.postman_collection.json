@@ -1,0 +1,103 @@
+{
+  "info": {
+    "_postman_id": "5b2c8278-cad7-4207-82d6-eb9c1f4bdf85",
+    "name": "message-processing",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "17364528"
+  },
+  "item": [
+    {
+      "name": "health check",
+      "protocolProfileBehavior": {
+        "disableBodyPruning": true
+      },
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "type": "text"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "http://localhost:8088/health",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "8088",
+          "path": ["health"]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "config log",
+      "request": {
+        "method": "PATCH",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "type": "text"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n    \"level\": \"DEBUG\",\n    \"map\": {\n        \"msg\": \"message\",\n        \"time\": \"@timestamp\"\n    },\n    \"constants\": {\n        \"app\": \"123\",\n        \"service\": \"user-service\"\n    },\n    \"name\": {\n        \"trace\": \"trace\",\n        \"debug\": \"debug\",\n        \"info\": \"info\",\n        \"warn\": \"warn\",\n        \"error\": \"error\",\n        \"panic\": \"panic\",\n        \"fatal\": \"fatal\"\n    }\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "http://localhost:8088/log",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "8088",
+          "path": ["log"]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "send to mq",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "type": "text"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n    \"id\": \"wolverine\",\n    \"username\": \"james.howlett\",\n    \"email\": \"james.howlett@gmail.com\",\n    \"phone\": \"0987654321\",\n    \"dateOfBirth\": \"1974-11-16T00:00:00+07:00\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "http://localhost:8088/send",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "8088",
+          "path": ["send"]
+        }
+      },
+      "response": []
+    }
+  ]
+}

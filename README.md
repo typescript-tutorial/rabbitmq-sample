@@ -1,6 +1,6 @@
 # rabbitmq-sample
 
-A production-style RabbitMQ sample application demonstrating how to build a clean, layered message processing system using the **core-ts** ecosystem.
+A production-style RabbitMQ sample application demonstrating how to build a clean, layered message processing system using the [**core-ts**](https://github.com/core-ts) ecosystem.
 
 This sample is **not** just a RabbitMQ producer/consumer example.
 
