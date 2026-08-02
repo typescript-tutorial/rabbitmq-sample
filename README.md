@@ -36,7 +36,7 @@ into independent layers.
                         ▼
                 Message Validation
                         │               No
-                      Valid ?─────────────────────────┐
+                      Valid ? ────────────────────────┐
                         │                             │
                         │ Yes                         ▼
                         │                       Error Handler
@@ -95,8 +95,8 @@ The sample demonstrates a complete message processing pipeline rather than indiv
 ```
 src/
 ├── config.ts
-├── index.ts (start the application)
 ├── context.ts (acts as a composition root)
+├── index.ts (start the application)
 ├── user/
 │   ├── user.ts
 │   ├── port.ts
@@ -135,15 +135,15 @@ That's exactly where dependency injection should happen.
 
 This sample demonstrates how several **core-ts** libraries work together.
 
-| Library            | Responsibility         |
-| ------------------ |------------------------|
-| rabbitmq-transport | RabbitMQ transport     |
-| message-processing | Processing pipeline    |
-| validation-core    | Message validation     |
-| mysql2-core        | Database Persistence   |
-| health-service     | Health endpoint        |
-| logger-core        | Logging                |
-| config-plus        | Configuration          |
+| Library                                                                  | Purpose                           |
+| ------------------------------------------------------------------------ | --------------------------------- |
+| [`rabbitmq-transport`](https://www.npmjs.com/package/rabbitmq-transport) | Publish and subscribe to RabbitMQ |
+| [`message-processing`](https://www.npmjs.com/package/message-processing) | Retry and error handling          |
+| [`mysql2-core`](https://www.npmjs.com/package/mysql2-core)               | Write data into MySQL             |
+| [`validation-core`](https://www.npmjs.com/package/validation-core)       | Validate incoming messages        |
+| [`health-service`](https://www.npmjs.com/package/health-service)         | Health endpoint                   |
+| [`logger-core`](https://www.npmjs.com/package/logger-core)               | Structured logging                |
+| [`config-plus`](https://www.npmjs.com/package/config-plus)               | Configuration management          |
 
 Each library focuses on a single responsibility.
 
@@ -464,18 +464,6 @@ This sample demonstrates production-oriented practices including:
 - Infrastructure abstraction
 
 Additional production features such as dead-letter queues, delayed retry queues, metrics, and distributed tracing can be added without changing the application architecture.
-
----
-
-# Related Projects
-
-- **rabbitmq-transport** – Type-safe RabbitMQ transport library
-- **message-processing** – Generic message processing framework
-- **mysql2-core** – MySQL data access library
-- **validation-core** – Validation framework
-- **config-plus** – Configuration management
-
-Together these libraries provide a complete foundation for building event-driven applications.
 
 ---
 

@@ -1,16 +1,13 @@
 export const config = {
   port: 8088,
-  secure: false,
   log: {
     level: "debug",
     map: {
       time: "@timestamp",
       msg: "message",
     },
-    db: true,
   },
   middleware: {
-    log: true,
     skips: "health,log",
     request: "request",
     status: "status",
@@ -23,6 +20,11 @@ export const config = {
     password: "abcd1234",
     database: "masterdata",
     multipleStatements: true,
+  },
+  retries: {
+    1: 10000,
+    2: 15000,
+    3: 25000,
   },
   rabbitmq: {
     url: "amqp://admin:abcd1234@localhost:5672",
